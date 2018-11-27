@@ -5,7 +5,6 @@ import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,15 +14,16 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
+import com.example.havi.shoppinglist.fragments.NewShoppingListItemDialogFragment;
 import com.example.havi.shoppinglist.listAdapter.ShoppingAdapter;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements ShoppingAdapter.ShoppingListItemClickListener {
+        implements NewShoppingListItemDialogFragment.NewShoppingListItemDialogListener,
+        ShoppingAdapter.ShoppingListItemClickListener {
 
     private ShoppingListsListDatabase database;
     private RecyclerView listRecyclerView;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO implement shopping item creation
+                new NewShoppingListItemDialogFragment().show(getSupportFragmentManager(), NewShoppingListItemDialogFragment.TAG);
             }
         });
 
@@ -114,6 +114,42 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void onPostExecute(Boolean isSuccessful) {
                 Log.d("MainActivity", "ShoppingListItem update was successful");
+            }
+        }.execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onShoppingListItemCreated(final ShoppingListItem newItem) {
+        new AsyncTask<Void, Void, ShoppingListItem>() {
+
+            @Override
+            protected ShoppingListItem doInBackground(Void... voids) {
+                newItem.id = database.shoppingListItemDao().insert(newItem);
+                return newItem;
+            }
+
+            @Override
+            protected void onPostExecute(ShoppingListItem shoppingListItem) {
+                adapter.addItem(shoppingListItem);
+            }
+        }.execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onItemDeleted(final ShoppingListItem newItem) {
+        new AsyncTask<Void, Void, ShoppingListItem>() {
+
+            @Override
+            protected ShoppingListItem doInBackground(Void... voids) {
+                database.shoppingListItemDao().deleteItem(newItem);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ShoppingListItem shoppingListItem) {
+                adapter.deleteItem(shoppingListItem);
             }
         }.execute();
     }

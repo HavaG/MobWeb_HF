@@ -57,6 +57,7 @@ public class ShoppingAdapter
 
     public interface ShoppingListItemClickListener{
         void onItemChanged(ShoppingListItem list_item);
+        void onItemDeleted(ShoppingListItem list_item);
     }
 
     class ShoppingViewHolder extends RecyclerView.ViewHolder {
@@ -80,8 +81,19 @@ public class ShoppingAdapter
                         listItem.isBought = isChecked;
                         if(isChecked)
                             nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        else
+                            nameTextView.setPaintFlags(nameTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+
                         listener.onItemChanged(listItem);
                     }
+                }
+            });
+
+            removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteItem(listItem);
+                    listener.onItemDeleted(listItem);
                 }
             });
         }
@@ -90,6 +102,11 @@ public class ShoppingAdapter
     public void addItem(ShoppingListItem item) {
         lists.add(item);
         notifyItemInserted(lists.size() - 1);
+    }
+
+    public void deleteItem(ShoppingListItem item) {
+        lists.remove(item);
+        notifyDataSetChanged();
     }
 
     public void update(List<ShoppingListItem> shoppingListItems) {
