@@ -3,6 +3,7 @@ package com.example.havi.shoppinglist.listAdapter;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class ShoppingAdapter
     public interface ShoppingListItemClickListener{
         void onItemChanged(ShoppingListItem list_item);
         void onItemDeleted(ShoppingListItem list_item);
+        void onItemClick(ShoppingListItem item);
     }
 
     class ShoppingViewHolder extends RecyclerView.ViewHolder {
@@ -65,6 +67,7 @@ public class ShoppingAdapter
         TextView nameTextView;
         CheckBox isBoughtCheckBox;
         ImageButton removeButton;
+        View nameLayout;
 
         ShoppingListItem listItem;
 
@@ -73,6 +76,7 @@ public class ShoppingAdapter
             nameTextView = itemView.findViewById(R.id.ShoppingListItemNameTextView);
             isBoughtCheckBox = itemView.findViewById(R.id.ShoppingItemIsBoughtCheckBox);
             removeButton = itemView.findViewById(R.id.ShoppingItemRemoveButton);
+            nameLayout = itemView.findViewById(R.id.nameLayout);
 
             isBoughtCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 @Override
@@ -94,6 +98,13 @@ public class ShoppingAdapter
                 public void onClick(View v) {
                     deleteItem(listItem);
                     listener.onItemDeleted(listItem);
+                }
+            });
+
+            nameLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(listItem);
                 }
             });
         }

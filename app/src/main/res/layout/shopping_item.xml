@@ -18,27 +18,38 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginLeft="8dp"/>
 
     <LinearLayout
         android:id="@+id/nameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginLeft="60dp"
         android:layout_toStartOf="@+id/ShoppingItemRemoveButton"
         android:layout_toLeftOf="@+id/ShoppingItemRemoveButton"
-        android:layout_toEndOf="@+id/ShoppingItemIsBoughtCheckBox"
-        android:layout_toRightOf="@+id/ShoppingItemIsBoughtCheckBox">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/ShoppingListItemNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
-            tools:text="Aldi" />
+            tools:text="Alma" />
+
+        <TextView
+            android:id="@+id/ShoppingItemCategoryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            tools:text="Food"/>
+
     </LinearLayout>
 
     <ImageButton

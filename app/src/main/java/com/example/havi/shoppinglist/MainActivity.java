@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
@@ -152,5 +153,11 @@ public class MainActivity extends AppCompatActivity
                 adapter.deleteItem(shoppingListItem);
             }
         }.execute();
+    }
+
+    @Override
+    public void onItemClick(ShoppingListItem item) {
+        //TODO: set listener (open listAcitvity with te given list)
+        Toast.makeText(getBaseContext(),"asd", Toast.LENGTH_LONG).show();
     }
 }
