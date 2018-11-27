@@ -2,6 +2,7 @@ package com.example.havi.shoppinglist;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +20,9 @@ import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingListItemDialogFragment;
 import com.example.havi.shoppinglist.listAdapter.ShoppingAdapter;
+import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -158,6 +161,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemClick(ShoppingListItem item) {
         //TODO: set listener (open listAcitvity with te given list)
+        Intent intent = new Intent(this, ListActivity.class);
+        intent.putExtra("item", (new Gson()).toJson(item));
         Toast.makeText(getBaseContext(),"asd", Toast.LENGTH_LONG).show();
+        startActivity(intent);
     }
 }

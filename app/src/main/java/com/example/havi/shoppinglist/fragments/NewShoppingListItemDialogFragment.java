@@ -17,7 +17,7 @@ import com.example.havi.shoppinglist.database.ShoppingListItem;
 
 public class NewShoppingListItemDialogFragment extends DialogFragment {
 
-    public static final String TAG = "NewShoppingItemDialogFragment";
+    public static final String TAG = "NewShoppingListItemDialogFragment";
 
     public interface NewShoppingListItemDialogListener {
         void onShoppingListItemCreated(ShoppingListItem newListItem);

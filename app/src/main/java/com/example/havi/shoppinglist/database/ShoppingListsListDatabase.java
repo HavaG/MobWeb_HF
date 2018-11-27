@@ -11,5 +11,4 @@ import android.arch.persistence.room.TypeConverters;
     @TypeConverters({Converters.class})
     public abstract class ShoppingListsListDatabase extends RoomDatabase {
         public abstract ShoppingListItemDao shoppingListItemDao();
-        public abstract ShoppingItemDao shoppingItemDao();
     }

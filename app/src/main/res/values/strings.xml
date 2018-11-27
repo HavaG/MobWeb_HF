@@ -8,4 +8,6 @@
     <string name="already_purchased">Already purchased</string>
     <string name="name">Name</string>
     <string name="title_activity_list">ListActivity</string>
+    <string name="category">Category</string>
+    <string name="new_shopping_item">New Shopping Item</string>
 </resources>
