@@ -4,7 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity(tableName = "shoppinglistitem")
     public class ShoppingListItem {
@@ -19,5 +19,5 @@ import java.util.ArrayList;
         public boolean isBought;
 
         @ColumnInfo(name = "shopping_items")
-        public ArrayList<ShoppingItem> shoppingItems;
+        public List<ShoppingItem> shoppingItems;
     }
