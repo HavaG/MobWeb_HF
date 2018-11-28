@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(ShoppingListItem item) {
-        //TODO: set listener (open listAcitvity with te given list)
         Intent intent = new Intent(this, ListActivity.class);
         intent.putExtra("item_id", item.id);
         startActivity(intent);

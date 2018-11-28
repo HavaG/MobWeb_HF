@@ -100,7 +100,6 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             protected Boolean doInBackground(Void... voids) {
-                //todo: elvileg ez jó item-et kap. Elvileg...
                 database.shoppingItemDao().update(listItem);
                 return true;
             }
