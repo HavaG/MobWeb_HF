@@ -20,4 +20,4 @@ import java.util.List;
 
         @ColumnInfo(name = "shopping_items")
         public List<ShoppingItem> shoppingItems;
-    }
+}

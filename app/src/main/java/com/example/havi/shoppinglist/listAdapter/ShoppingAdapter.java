@@ -1,5 +1,6 @@
 package com.example.havi.shoppinglist.listAdapter;
 
+import android.arch.persistence.room.ForeignKey;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

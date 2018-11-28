@@ -2,6 +2,7 @@ package com.example.havi.shoppinglist;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,10 +19,13 @@ import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingItemDialogFragment;
 import com.example.havi.shoppinglist.listAdapter.ItemAdapter;
+import com.example.havi.shoppinglist.listAdapter.ShoppingAdapter;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class ListActivity extends AppCompatActivity
         implements NewShoppingItemDialogFragment.NewShoppingItemDialogListener,
@@ -32,12 +36,17 @@ public class ListActivity extends AppCompatActivity
     private RecyclerView listRecyclerView;
     private ItemAdapter adapter;
 
-    private ShoppingListItem item;
+    private long item_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        Intent intent = getIntent();
+        item_id = intent.getLongExtra("item_id", -1);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("List");
         setSupportActionBar(toolbar);
@@ -50,22 +59,19 @@ public class ListActivity extends AppCompatActivity
             }
         });
 
-        Intent intent = getIntent();
-        String s = intent.getStringExtra("item");
-        item = new Gson().fromJson(s, ShoppingListItem.class);
-
         database = Room.databaseBuilder(
                 getApplicationContext(),
                 ShoppingListsListDatabase.class,
-                "shopping-lists"
-        ).build();
+                "shopping-lists")
+                .fallbackToDestructiveMigration()
+                .build();
 
         initRecyclerView();
     }
 
     private void initRecyclerView() {
         listRecyclerView = findViewById(R.id.ListRecyclerView);
-        adapter = new ItemAdapter((ItemAdapter.ShoppingItemClickListener) this);
+        adapter = new ItemAdapter(this);
         loadItemsInBackground();
         listRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         listRecyclerView.setAdapter(adapter);
@@ -77,19 +83,7 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             protected List<ShoppingItem> doInBackground(Void... voids) {
-
-                List<ShoppingListItem> index = database.shoppingListItemDao().getAll();
-                ShoppingListItem temp = null;
-                for(int i = 0; i < index.size(); i++){
-                    if(index.get(i).id.equals(item.id))
-                    {
-                        temp = index.get(i);
-                        break;
-                    }
-                }
-                if(temp.shoppingItems == null)
-                    temp.shoppingItems = new ArrayList<>();
-                return temp.shoppingItems;
+                return database.shoppingItemDao().getAll(item_id);
             }
 
             @Override
@@ -106,8 +100,8 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             protected Boolean doInBackground(Void... voids) {
-                //TODO: az item-et kell updatelni
-                database.shoppingListItemDao().update(listItem);
+                //todo: elvileg ez jó item-et kap. Elvileg...
+                database.shoppingItemDao().update(listItem);
                 return true;
             }
 
@@ -125,10 +119,8 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             protected ShoppingItem doInBackground(Void... voids) {
-                int index = database.shoppingListItemDao().getAll().indexOf(item);
-                ShoppingListItem temp = database.shoppingListItemDao().get(index);
-                temp.shoppingItems.add(newItem);
-                database.shoppingListItemDao().update(newItem);
+                newItem.list_id = item_id;
+                newItem.id = database.shoppingItemDao().insert(newItem);
                 return newItem;
             }
 
@@ -146,10 +138,7 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             protected ShoppingItem doInBackground(Void... voids) {
-                int index = database.shoppingListItemDao().getAll().indexOf(item);
-                ShoppingListItem temp = database.shoppingListItemDao().get(index);
-                temp.shoppingItems.remove(newItem);
-                database.shoppingListItemDao().update(newItem);
+                database.shoppingItemDao().deleteItem(newItem);
                 return null;
             }
 

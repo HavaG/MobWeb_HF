@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,9 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingListItemDialogFragment;
+import com.example.havi.shoppinglist.listAdapter.ItemAdapter;
 import com.example.havi.shoppinglist.listAdapter.ShoppingAdapter;
 import com.google.gson.Gson;
 
@@ -27,7 +30,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NewShoppingListItemDialogFragment.NewShoppingListItemDialogListener,
-        ShoppingAdapter.ShoppingListItemClickListener {
+        ShoppingAdapter.ShoppingListItemClickListener{
 
     private ShoppingListsListDatabase database;
     private RecyclerView listRecyclerView;
@@ -52,8 +55,9 @@ public class MainActivity extends AppCompatActivity
         database = Room.databaseBuilder(
                 getApplicationContext(),
                 ShoppingListsListDatabase.class,
-                "shopping-lists"
-        ).build();
+                "shopping-lists")
+                .fallbackToDestructiveMigration()
+                .build();
 
         initRecyclerView();
     }
@@ -162,8 +166,7 @@ public class MainActivity extends AppCompatActivity
     public void onItemClick(ShoppingListItem item) {
         //TODO: set listener (open listAcitvity with te given list)
         Intent intent = new Intent(this, ListActivity.class);
-        intent.putExtra("item", (new Gson()).toJson(item));
-        Toast.makeText(getBaseContext(),"asd", Toast.LENGTH_LONG).show();
+        intent.putExtra("item_id", item.id);
         startActivity(intent);
     }
 }

@@ -14,7 +14,7 @@ public interface ShoppingListItemDao {
     List<ShoppingListItem> getAll();
 
     @Query("SELECT * FROM shoppinglistitem WHERE id = :id LIMIT 1")
-    ShoppingListItem get(int id);
+    ShoppingListItem get(Long id);
 
     @Insert
     long insert(ShoppingListItem shoppingListItems);

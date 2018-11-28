@@ -18,4 +18,7 @@ import android.arch.persistence.room.PrimaryKey;
 
         @ColumnInfo(name = "is_bought")
         public boolean isBought;
+
+        @ColumnInfo(name = "list_id")
+        public Long list_id;
     }

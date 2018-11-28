@@ -10,8 +10,8 @@ import java.util.List;
 
 @Dao
 public interface ShoppingItemDao {
-    @Query("SELECT * FROM shoppingitem")
-    List<ShoppingItem> getAll();
+    @Query("SELECT * FROM shoppingitem WHERE list_id = :id")
+    List<ShoppingItem> getAll(long id);
 
     @Insert
     long insert(ShoppingItem shoppingItems);
