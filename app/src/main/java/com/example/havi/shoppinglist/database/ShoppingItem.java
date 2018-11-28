@@ -14,7 +14,7 @@ import android.arch.persistence.room.PrimaryKey;
         public String name;
 
         @ColumnInfo(name = "category")
-        public String category;
+        public Category category;
 
         @ColumnInfo(name = "is_bought")
         public boolean isBought;

@@ -10,4 +10,7 @@
     <string name="title_activity_list">ListActivity</string>
     <string name="category">Category</string>
     <string name="new_shopping_item">New Shopping Item</string>
+    <string name="new_category">Add Category</string>
+    <string name="add">Add</string>
+    <string name="title_activity_category">CategoryActivity</string>
 </resources>

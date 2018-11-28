@@ -7,27 +7,23 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 @Database(
-            entities = {ShoppingListItem.class, ShoppingItem.class},
-            version = 2
+            entities = {ShoppingListItem.class, ShoppingItem.class, Category.class},
+            version = 3
     )
     @TypeConverters({Converters.class})
     public abstract class ShoppingListsListDatabase extends RoomDatabase {
     public abstract ShoppingListItemDao shoppingListItemDao();
     public abstract ShoppingItemDao shoppingItemDao();
-
-
-
-
-
-    public static final String DATABASE_NAME = "list-db";
-
+    public abstract CategoryDao categoryDao();
     private static ShoppingListsListDatabase INSTANCE;
 
-    public static ShoppingListsListDatabase getDatabase(Context context){
-
-        if(INSTANCE == null){
-            INSTANCE = Room.databaseBuilder(context, ShoppingListsListDatabase.class, DATABASE_NAME)
-                    .allowMainThreadQueries()
+    public synchronized static ShoppingListsListDatabase getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(
+                    context,
+                    ShoppingListsListDatabase.class,
+                    "shopping-lists")
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return INSTANCE;

@@ -2,7 +2,6 @@ package com.example.havi.shoppinglist;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,18 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.example.havi.shoppinglist.database.Category;
 import com.example.havi.shoppinglist.database.ShoppingItem;
-import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingItemDialogFragment;
-import com.example.havi.shoppinglist.listAdapter.ItemAdapter;
-import com.example.havi.shoppinglist.listAdapter.ShoppingAdapter;
-import com.google.gson.Gson;
+import com.example.havi.shoppinglist.Adapter.ItemAdapter;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class ListActivity extends AppCompatActivity
         implements NewShoppingItemDialogFragment.NewShoppingItemDialogListener,
@@ -59,12 +53,7 @@ public class ListActivity extends AppCompatActivity
             }
         });
 
-        database = Room.databaseBuilder(
-                getApplicationContext(),
-                ShoppingListsListDatabase.class,
-                "shopping-lists")
-                .fallbackToDestructiveMigration()
-                .build();
+        database = ShoppingListsListDatabase.getInstance(getBaseContext());
 
         initRecyclerView();
     }

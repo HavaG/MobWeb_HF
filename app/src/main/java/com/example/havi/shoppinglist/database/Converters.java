@@ -23,4 +23,17 @@ public class Converters {
         String json = gson.toJson(list);
         return json;
     }
+
+    @TypeConverter
+    public static Category fromCategoryString(String value) {
+        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+        return new Gson().fromJson(value, listType);
+    }
+
+    @TypeConverter
+    public static String fromCategory(Category category) {
+        Gson gson = new Gson();
+        String json = gson.toJson(category);
+        return json;
+    }
 }

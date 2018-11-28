@@ -1,4 +1,4 @@
-package com.example.havi.shoppinglist.listAdapter;
+package com.example.havi.shoppinglist.Adapter;
 
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
@@ -12,20 +12,19 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.havi.shoppinglist.R;
-import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemAdapter
-        extends RecyclerView.Adapter<ItemAdapter.ShoppingViewHolder> {
+public class ShoppingAdapter
+        extends RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder> {
 
-    private final List<ShoppingItem> lists;
+    private final List<ShoppingListItem> lists;
 
-    private ShoppingItemClickListener listener;
+    private ShoppingListItemClickListener listener;
 
-    public ItemAdapter(ShoppingItemClickListener listener) {
+    public ShoppingAdapter(ShoppingListItemClickListener listener) {
         this.lists = new ArrayList<>();
         this.listener = listener;
     }
@@ -35,13 +34,13 @@ public class ItemAdapter
     public ShoppingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View listItemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.shopping_item, parent, false);
+                .inflate(R.layout.shopping_list_item, parent, false);
         return new ShoppingViewHolder(listItemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ShoppingViewHolder holder, int position) {
-        ShoppingItem listItem = lists.get(position);
+        ShoppingListItem listItem = lists.get(position);
         holder.nameTextView.setText(listItem.name);
         holder.isBoughtCheckBox.setChecked(listItem.isBought);
 
@@ -53,9 +52,10 @@ public class ItemAdapter
         return lists.size();
     }
 
-    public interface ShoppingItemClickListener{
-        void onItemChanged(ShoppingItem list_item);
-        void onItemDeleted(ShoppingItem list_item);
+    public interface ShoppingListItemClickListener{
+        void onItemChanged(ShoppingListItem list_item);
+        void onItemDeleted(ShoppingListItem list_item);
+        void onItemClick(ShoppingListItem item);
     }
 
     class ShoppingViewHolder extends RecyclerView.ViewHolder {
@@ -63,14 +63,16 @@ public class ItemAdapter
         TextView nameTextView;
         CheckBox isBoughtCheckBox;
         ImageButton removeButton;
+        View nameLayout;
 
-        ShoppingItem listItem;
+        ShoppingListItem listItem;
 
         ShoppingViewHolder(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.ShoppingListItemNameTextView);
             isBoughtCheckBox = itemView.findViewById(R.id.ShoppingItemIsBoughtCheckBox);
             removeButton = itemView.findViewById(R.id.ShoppingItemRemoveButton);
+            nameLayout = itemView.findViewById(R.id.nameLayout);
 
             isBoughtCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 @Override
@@ -94,22 +96,29 @@ public class ItemAdapter
                     listener.onItemDeleted(listItem);
                 }
             });
+
+            nameLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(listItem);
+                }
+            });
         }
     }
 
-    public void addItem(ShoppingItem item) {
+    public void addItem(ShoppingListItem item) {
         lists.add(item);
         notifyItemInserted(lists.size() - 1);
     }
 
-    public void deleteItem(ShoppingItem item) {
+    public void deleteItem(ShoppingListItem item) {
         lists.remove(item);
         notifyDataSetChanged();
     }
 
-    public void update(List<ShoppingItem> shoppingItems) {
+    public void update(List<ShoppingListItem> shoppingListItems) {
         lists.clear();
-        lists.addAll(shoppingItems);
+        lists.addAll(shoppingListItems);
         notifyDataSetChanged();
     }
 }

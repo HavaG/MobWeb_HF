@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.havi.shoppinglist.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_addCategory"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Add Category"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="100"
+        android:title="Exit"
         app:showAsAction="never" />
 </menu>

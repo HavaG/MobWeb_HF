@@ -2,30 +2,30 @@ package com.example.havi.shoppinglist;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.widget.EditText;
 
-import com.example.havi.shoppinglist.database.ShoppingItem;
+import com.example.havi.shoppinglist.Adapter.CategoryAdapter;
+import com.example.havi.shoppinglist.database.Category;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingListItemDialogFragment;
-import com.example.havi.shoppinglist.listAdapter.ItemAdapter;
-import com.example.havi.shoppinglist.listAdapter.ShoppingAdapter;
-import com.google.gson.Gson;
+import com.example.havi.shoppinglist.Adapter.ShoppingAdapter;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -52,12 +52,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        database = Room.databaseBuilder(
-                getApplicationContext(),
-                ShoppingListsListDatabase.class,
-                "shopping-lists")
-                .fallbackToDestructiveMigration()
-                .build();
+        database = ShoppingListsListDatabase.getInstance(getBaseContext());
 
         initRecyclerView();
     }
@@ -77,7 +72,22 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_addCategory) {
+            Intent intent = new Intent(getBaseContext(), CategoryActivity.class);
+            startActivity(intent);
+            return true;
+        } else if(id == R.id.action_exit) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Really Exit?")
+                    .setMessage("Are you sure you want to exit?")
+                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            MainActivity.super.onBackPressed();
+                            finishAffinity();
+                        }
+                    }).create().show();
             return true;
         }
 

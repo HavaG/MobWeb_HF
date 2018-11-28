@@ -22,9 +22,6 @@ public interface ShoppingListItemDao {
     @Update
     void update(ShoppingListItem shoppingListItems);
 
-    @Update
-    void update(ShoppingItem shoppingItems);
-
     @Delete
     void deleteItem(ShoppingListItem shoppingListItems);
 }
