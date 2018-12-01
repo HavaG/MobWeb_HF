@@ -43,6 +43,7 @@ public class ItemAdapter
         ShoppingItem listItem = lists.get(position);
         holder.nameTextView.setText(listItem.name);
         holder.isBoughtCheckBox.setChecked(listItem.isBought);
+        holder.categoryTextView.setText(listItem.category.name);
 
         holder.listItem = listItem;
     }
@@ -62,12 +63,14 @@ public class ItemAdapter
         TextView nameTextView;
         CheckBox isBoughtCheckBox;
         ImageButton removeButton;
+        TextView categoryTextView;
 
         ShoppingItem listItem;
 
         ShoppingViewHolder(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.ShoppingListItemNameTextView);
+            categoryTextView = itemView.findViewById(R.id.ShoppingItemCategoryTextView);
             isBoughtCheckBox = itemView.findViewById(R.id.ShoppingItemIsBoughtCheckBox);
             removeButton = itemView.findViewById(R.id.ShoppingItemRemoveButton);
 

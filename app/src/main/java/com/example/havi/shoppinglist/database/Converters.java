@@ -26,7 +26,7 @@ public class Converters {
 
     @TypeConverter
     public static Category fromCategoryString(String value) {
-        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+        Type listType = new TypeToken<Category>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 

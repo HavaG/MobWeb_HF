@@ -22,7 +22,11 @@ import com.example.havi.shoppinglist.database.Category;
 import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewShoppingItemDialogFragment extends DialogFragment {
@@ -31,12 +35,12 @@ public class NewShoppingItemDialogFragment extends DialogFragment {
 
     private ShoppingListsListDatabase database;
     private List<Category> categories;
+    private NewShoppingItemDialogListener listener;
+    ArrayList<String> categoryNames = new ArrayList<>();
 
     public interface NewShoppingItemDialogListener {
         void onShoppingItemCreated(ShoppingItem newItem);
     }
-
-    private NewShoppingItemDialogListener listener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,12 +53,29 @@ public class NewShoppingItemDialogFragment extends DialogFragment {
         }
 
         database = ShoppingListsListDatabase.getInstance(getContext());
+        loadBackground();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void loadBackground() {
+        new AsyncTask<Void, Void, List<Category>>() {
+
+            @Override
+            protected List<Category> doInBackground(Void... voids) {
+                categories = database.categoryDao().getAll();
+                return database.categoryDao().getAll();
+            }
+
+            @Override
+            protected void onPostExecute(List<Category> categoryItems) {
+                categories = categoryItems;
+            }
+        }.execute();
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        loadCategoriesInBackground();
         return new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.new_shopping_item)
                 .setView(getContentView())
@@ -80,33 +101,22 @@ public class NewShoppingItemDialogFragment extends DialogFragment {
         alreadyPurchasedCheckBox = contentView.findViewById(R.id.ShoppingItemIsPurchasedCheckBox);
 
         categorySpinner = contentView.findViewById(R.id.ShoppingItemCategorySpinner);
+        for (int i = 0; i < categories.size(); i++){
+            categoryNames.add(categories.get(i).name);
+        }
         categorySpinner.setAdapter(new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                categories));
-
-
+                categoryNames));
 
         return contentView;
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private void loadCategoriesInBackground() {
-        new AsyncTask<Void, Void, List<Category>>() {
-
-            @Override
-            protected List<Category> doInBackground(Void... voids) {
-                return database.categoryDao().getAll();
-            }
-
-            @Override
-            protected void onPostExecute(List<Category> categoryItems) {
-                categories = categoryItems;
-            }
-        }.execute();
-    }
-
     private boolean isValid() {
-        return nameEditText.getText().length() > 0;
+        if(nameEditText.getText().length() > 0 && categorySpinner.getSelectedItemPosition() != -1)
+        {
+            return true;
+        }
+        return false;
     }
 
     private ShoppingItem getShoppingItem() {

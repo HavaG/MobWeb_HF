@@ -18,7 +18,9 @@ import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingItemDialogFragment;
 import com.example.havi.shoppinglist.Adapter.ItemAdapter;
+import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListActivity extends AppCompatActivity
@@ -30,16 +32,21 @@ public class ListActivity extends AppCompatActivity
     private RecyclerView listRecyclerView;
     private ItemAdapter adapter;
 
+    private List<Category> categories;
+
     private long item_id;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        database = ShoppingListsListDatabase.getInstance(getBaseContext());
+        loadBackground();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
         Intent intent = getIntent();
         item_id = intent.getLongExtra("item_id", -1);
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("List");
@@ -53,8 +60,6 @@ public class ListActivity extends AppCompatActivity
             }
         });
 
-        database = ShoppingListsListDatabase.getInstance(getBaseContext());
-
         initRecyclerView();
     }
 
@@ -64,6 +69,24 @@ public class ListActivity extends AppCompatActivity
         loadItemsInBackground();
         listRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         listRecyclerView.setAdapter(adapter);
+    }
+
+
+    @SuppressLint("StaticFieldLeak")
+    private void loadBackground() {
+        new AsyncTask<Void, Void, List<Category>>() {
+
+            @Override
+            protected List<Category> doInBackground(Void... voids) {
+                categories = database.categoryDao().getAll();
+                return database.categoryDao().getAll();
+            }
+
+            @Override
+            protected void onPostExecute(List<Category> categoryItems) {
+                categories = categoryItems;
+            }
+        }.execute();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -108,6 +131,8 @@ public class ListActivity extends AppCompatActivity
             @Override
             protected ShoppingItem doInBackground(Void... voids) {
                 newItem.list_id = item_id;
+                long id = newItem.category.id;
+                newItem.category = database.categoryDao().get(id);
                 newItem.id = database.shoppingItemDao().insert(newItem);
                 return newItem;
             }
