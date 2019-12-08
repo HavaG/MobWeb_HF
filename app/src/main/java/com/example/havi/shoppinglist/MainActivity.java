@@ -1,7 +1,6 @@
 package com.example.havi.shoppinglist;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,24 +11,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-
-import com.example.havi.shoppinglist.Adapter.CategoryAdapter;
-import com.example.havi.shoppinglist.database.Category;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingListItemDialogFragment;
 import com.example.havi.shoppinglist.Adapter.ShoppingAdapter;
+import com.example.havi.shoppinglist.fragments.UpdateShoppingListItemDialogFragment;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NewShoppingListItemDialogFragment.NewShoppingListItemDialogListener,
+        implements NewShoppingListItemDialogFragment.NewShoppingListItemDialogListener, UpdateShoppingListItemDialogFragment.UpdateShoppingListItemDialogListener,
         ShoppingAdapter.ShoppingListItemClickListener{
 
     private ShoppingListsListDatabase database;
@@ -131,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Boolean isSuccessful) {
-                Log.d("MainActivity", "ShoppingListItem update was successful");
+                adapter.updateItem(listItem);
             }
         }.execute();
     }
@@ -177,5 +171,24 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, ListActivity.class);
         intent.putExtra("item_id", item.id);
         startActivity(intent);
+    }
+
+
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onShoppingListItemUpdated(final ShoppingListItem newItem) {
+        new AsyncTask<Void, Void, ShoppingListItem>() {
+
+            @Override
+            protected ShoppingListItem doInBackground(Void... voids) {
+                database.shoppingListItemDao().update(newItem);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ShoppingListItem shoppingListItem) {
+                adapter.updateItem(shoppingListItem);
+            }
+        }.execute();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.havi.shoppinglist.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -9,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,36 +21,38 @@ import android.widget.Toast;
 import com.example.havi.shoppinglist.R;
 import com.example.havi.shoppinglist.database.Category;
 import com.example.havi.shoppinglist.database.ShoppingItem;
-import com.example.havi.shoppinglist.database.ShoppingListItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewShoppingItemDialogFragment extends DialogFragment {
+public class UpdateShoppingItemDialogFragment extends DialogFragment {
 
-    public static final String TAG = "NewShoppingItemDialogFragment";
+    private ShoppingItem updateItem;
+    public static final String TAG = "UpdateShoppingItemDialogFragment";
 
     private ShoppingListsListDatabase database;
     private List<Category> categories;
-    private NewShoppingItemDialogListener listener;
+    private UpdateShoppingItemDialogListener listener;
     ArrayList<String> categoryNames = new ArrayList<>();
 
-    public interface NewShoppingItemDialogListener {
-        void onShoppingItemCreated(ShoppingItem newItem);
+    public interface UpdateShoppingItemDialogListener {
+        void onItemChanged(ShoppingItem newItem);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FragmentActivity activity = getActivity();
-        if (activity instanceof NewShoppingItemDialogListener) {
-            listener = (NewShoppingItemDialogListener) activity;
+        if (activity instanceof UpdateShoppingItemDialogListener) {
+            listener = (UpdateShoppingItemDialogListener) activity;
         } else {
-            throw new RuntimeException("Activity must implement the NewShoppingItemDialogListener interface!");
+            throw new RuntimeException("Activity must implement the UpdateShoppingItemDialogListener interface!");
+        }
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            updateItem = (ShoppingItem) bundle.getSerializable("ITEM");
         }
 
         database = ShoppingListsListDatabase.getInstance(getContext());
@@ -78,13 +80,16 @@ public class NewShoppingItemDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.new_shopping_item)
+                .setTitle(R.string.update_shopping_item)
                 .setView(getContentView())
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (isValid()) {
-                            listener.onShoppingItemCreated(getShoppingItem());
+                            updateItem.name = nameEditText.getText().toString();
+                            updateItem.isBought = alreadyPurchasedCheckBox.isChecked();
+                            updateItem.category = categories.get(categorySpinner.getSelectedItemPosition());
+                            listener.onItemChanged(updateItem);
                         } else {
                             Toast.makeText(getContext(), "Something went wrong. (category? name?)", Toast.LENGTH_SHORT).show();
                         }
@@ -101,7 +106,9 @@ public class NewShoppingItemDialogFragment extends DialogFragment {
     private View getContentView() {
         View contentView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_new_shopping_item, null);
         nameEditText = contentView.findViewById(R.id.ShoppingItemNameEditText);
+        nameEditText.setText(updateItem.name);
         alreadyPurchasedCheckBox = contentView.findViewById(R.id.ShoppingItemIsPurchasedCheckBox);
+        alreadyPurchasedCheckBox.setChecked(updateItem.isBought);
 
         categorySpinner = contentView.findViewById(R.id.ShoppingItemCategorySpinner);
         for (int i = 0; i < categories.size(); i++){
@@ -110,6 +117,8 @@ public class NewShoppingItemDialogFragment extends DialogFragment {
         categorySpinner.setAdapter(new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
                 categoryNames));
+        int position = categoryNames.indexOf(updateItem.category.name);
+        categorySpinner.setSelection(position);
 
         return contentView;
     }

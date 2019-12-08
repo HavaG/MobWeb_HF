@@ -1,7 +1,9 @@
 package com.example.havi.shoppinglist.Adapter;
 
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.havi.shoppinglist.R;
 import com.example.havi.shoppinglist.database.ShoppingListItem;
+import com.example.havi.shoppinglist.fragments.UpdateShoppingListItemDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,6 @@ public class ShoppingAdapter
         extends RecyclerView.Adapter<ShoppingAdapter.ShoppingViewHolder> {
 
     private final List<ShoppingListItem> lists;
-
     private ShoppingListItemClickListener listener;
 
     public ShoppingAdapter(ShoppingListItemClickListener listener) {
@@ -63,6 +65,7 @@ public class ShoppingAdapter
         TextView nameTextView;
         CheckBox isBoughtCheckBox;
         ImageButton removeButton;
+        ImageButton editButton;
         View nameLayout;
 
         ShoppingListItem listItem;
@@ -72,6 +75,7 @@ public class ShoppingAdapter
             nameTextView = itemView.findViewById(R.id.ShoppingListItemNameTextView);
             isBoughtCheckBox = itemView.findViewById(R.id.ShoppingItemIsBoughtCheckBox);
             removeButton = itemView.findViewById(R.id.ShoppingItemRemoveButton);
+            editButton = itemView.findViewById(R.id.ShoppingItemUpdateButton);
             nameLayout = itemView.findViewById(R.id.nameLayout);
 
             isBoughtCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
@@ -97,6 +101,21 @@ public class ShoppingAdapter
                 }
             });
 
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                    UpdateShoppingListItemDialogFragment fragment = new UpdateShoppingListItemDialogFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("ITEM", listItem);
+                    fragment.setArguments(bundle);
+                    fragment.show(activity.getSupportFragmentManager(), UpdateShoppingListItemDialogFragment.TAG);
+                    updateItem(listItem);
+                    listener.onItemChanged(listItem);
+                }
+            });
+
             nameLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,6 +132,10 @@ public class ShoppingAdapter
 
     public void deleteItem(ShoppingListItem item) {
         lists.remove(item);
+        notifyDataSetChanged();
+    }
+
+    public void updateItem(ShoppingListItem item) {
         notifyDataSetChanged();
     }
 

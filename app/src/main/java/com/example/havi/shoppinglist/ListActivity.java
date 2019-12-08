@@ -18,13 +18,14 @@ import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewShoppingItemDialogFragment;
 import com.example.havi.shoppinglist.Adapter.ItemAdapter;
+import com.example.havi.shoppinglist.fragments.UpdateShoppingItemDialogFragment;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListActivity extends AppCompatActivity
-        implements NewShoppingItemDialogFragment.NewShoppingItemDialogListener,
+        implements NewShoppingItemDialogFragment.NewShoppingItemDialogListener, UpdateShoppingItemDialogFragment.UpdateShoppingItemDialogListener,
         ItemAdapter.ShoppingItemClickListener {
 
     private ShoppingListsListDatabase database;
@@ -118,7 +119,7 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Boolean isSuccessful) {
-                Log.d("ListActivity", "ShoppingItem update was successful");
+                adapter.updateItem(listItem);
             }
         }.execute();
     }
@@ -161,4 +162,5 @@ public class ListActivity extends AppCompatActivity
             }
         }.execute();
     }
+
 }

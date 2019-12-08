@@ -10,7 +10,7 @@ import java.util.List;
 
 @Dao
 public interface ShoppingItemDao {
-    @Query("SELECT * FROM shoppingitem WHERE list_id = :id")
+    @Query("SELECT * FROM shoppingitem WHERE list_id = :id ORDER BY shoppingitem.category")
     List<ShoppingItem> getAll(long id);
 
     @Insert

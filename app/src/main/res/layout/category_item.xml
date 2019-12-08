@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/CategoryItemNameTextView"
-        android:layout_width="306dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -19,12 +19,22 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_toStartOf="@+id/ShoppingItemRemoveButton"
-        android:layout_toLeftOf="@+id/ShoppingItemRemoveButton"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         tools:text="Eleség" />
 
+
+    <ImageButton
+        android:id="@+id/CategoryItemUpdateButton"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_toStartOf="@+id/CategoryRemoveButton"
+        android:layout_toLeftOf="@+id/CategoryRemoveButton"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_edit" />
 
     <ImageButton
         android:id="@+id/CategoryRemoveButton"

@@ -1,7 +1,9 @@
 package com.example.havi.shoppinglist.Adapter;
 
-import android.graphics.Paint;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.havi.shoppinglist.R;
+import com.example.havi.shoppinglist.ShoppingItemComparator;
 import com.example.havi.shoppinglist.database.ShoppingItem;
+import com.example.havi.shoppinglist.database.ShoppingListItem;
+import com.example.havi.shoppinglist.fragments.UpdateShoppingItemDialogFragment;
+import com.example.havi.shoppinglist.fragments.UpdateShoppingListItemDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +69,7 @@ public class ItemAdapter
         TextView nameTextView;
         CheckBox isBoughtCheckBox;
         ImageButton removeButton;
+        ImageButton editButton;
         TextView categoryTextView;
 
         ShoppingItem listItem;
@@ -73,17 +80,13 @@ public class ItemAdapter
             categoryTextView = itemView.findViewById(R.id.ShoppingItemCategoryTextView);
             isBoughtCheckBox = itemView.findViewById(R.id.ShoppingItemIsBoughtCheckBox);
             removeButton = itemView.findViewById(R.id.ShoppingItemRemoveButton);
+            editButton = itemView.findViewById(R.id.ShoppingItemUpdateButton);
 
             isBoughtCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                     if(listItem != null){
                         listItem.isBought = isChecked;
-                        if(isChecked)
-                            nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                        else
-                            nameTextView.setPaintFlags(nameTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-
                         listener.onItemChanged(listItem);
                     }
                 }
@@ -96,22 +99,49 @@ public class ItemAdapter
                     listener.onItemDeleted(listItem);
                 }
             });
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                    UpdateShoppingItemDialogFragment fragment = new UpdateShoppingItemDialogFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("ITEM", listItem);
+                    fragment.setArguments(bundle);
+                    fragment.show(activity.getSupportFragmentManager(), UpdateShoppingItemDialogFragment.TAG);
+                    updateItem(listItem);
+                    listener.onItemChanged(listItem);
+                }
+            });
         }
     }
 
     public void addItem(ShoppingItem item) {
         lists.add(item);
         notifyItemInserted(lists.size() - 1);
+        notifyAdapterDataSetChanged();
     }
 
     public void deleteItem(ShoppingItem item) {
         lists.remove(item);
-        notifyDataSetChanged();
+        notifyAdapterDataSetChanged();
     }
 
     public void update(List<ShoppingItem> shoppingItems) {
         lists.clear();
         lists.addAll(shoppingItems);
+        notifyAdapterDataSetChanged();
+    }
+
+    public void updateItem(ShoppingItem item) {
+        notifyAdapterDataSetChanged();
+    }
+
+    private void notifyAdapterDataSetChanged() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            lists.sort(new ShoppingItemComparator());
+        }
         notifyDataSetChanged();
     }
 }

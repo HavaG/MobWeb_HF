@@ -4,8 +4,12 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
 @Entity(tableName = "shoppingitem")
-    public class ShoppingItem {
+    public class ShoppingItem implements Serializable {
         @ColumnInfo(name = "id")
         @PrimaryKey(autoGenerate = true)
         public Long id;

@@ -20,12 +20,15 @@ import com.example.havi.shoppinglist.database.ShoppingItem;
 import com.example.havi.shoppinglist.database.ShoppingListsListDatabase;
 import com.example.havi.shoppinglist.fragments.NewCategoryDialogFragment;
 import com.example.havi.shoppinglist.fragments.NewShoppingItemDialogFragment;
+import com.example.havi.shoppinglist.fragments.UpdateCategoryDialogFragment;
+import com.example.havi.shoppinglist.fragments.UpdateShoppingItemDialogFragment;
 import com.google.gson.Gson;
 
 import java.util.List;
 
 public class CategoryActivity extends AppCompatActivity
         implements NewCategoryDialogFragment.NewCategoryDialogListener,
+        UpdateCategoryDialogFragment.UpdateCategoryDialogListener,
         CategoryAdapter.CategoryClickListener {
 
     private ShoppingListsListDatabase database;
@@ -37,7 +40,7 @@ public class CategoryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         database = ShoppingListsListDatabase.getInstance(getBaseContext());
         setContentView(R.layout.activity_category);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Categories");
         setSupportActionBar(toolbar);
 
@@ -113,4 +116,21 @@ public class CategoryActivity extends AppCompatActivity
         }.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onItemChanged(final Category categoryItem) {
+        new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                database.categoryDao().update(categoryItem);
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean isSuccessful) {
+                adapter.updateItem(categoryItem);
+            }
+        }.execute();
+    }
 }

@@ -4,10 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(tableName = "shoppinglistitem")
-    public class ShoppingListItem {
+    public class ShoppingListItem implements Serializable {
         @ColumnInfo(name = "id")
         @PrimaryKey(autoGenerate = true)
         public Long id;
@@ -19,5 +22,5 @@ import java.util.List;
         public boolean isBought;
 
         @ColumnInfo(name = "shopping_items")
-        public List<ShoppingItem> shoppingItems;
+        List<ShoppingItem> shoppingItems;
 }
